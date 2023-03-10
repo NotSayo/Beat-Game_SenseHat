@@ -24,6 +24,7 @@ class Game():
 
     def GetLives(self):
         return self.lives
+    
     def AddPoints(self, points):
         self.score += points
     
@@ -43,6 +44,7 @@ class Brick():
     def __init__(self, site, color):
         self.site = site
         self.color = color
+        self.moveSpeed = 50
 
     def GetSite(self):
         return self.site
@@ -66,7 +68,7 @@ class Brick():
         self.position = position
 
     def CheckMove(self):
-        if self.moveTimer == self.moveSpeed:
+        if self.moveTimer >= self.moveSpeed:
             self.moveTimer = 0
             self.UpdatePosition()
         else:
@@ -140,7 +142,8 @@ colors = [ r, pu, pi, g, y]
 
 ConstSpawnFreq = 50
 spawnFreq = 0
-nextIncrease = 2
+nextIncrease = 5
+changeFactor = 0.8
 
 #endregion
 
@@ -208,16 +211,19 @@ def CheckMiddleBrick():
 
 def CheckSpeedIncrease():
     global spawnFreq
+    global ConstSpawnFreq
     global nextIncrease
-    score = game.GetScore
+    global changeFactor
 
-    if (score == nextIncrease):
+    score = game.GetScore()
+
+    if (score >= nextIncrease):
+        
         nextIncrease *= 2
-        spawnFreq *= 0.2
+        ConstSpawnFreq *= changeFactor
         bricks = game.GetBricks()
-
         for i in range(len(bricks)):
-            bricks[i].ChangeSpeed(bricks[i].GetMoveSpeed() * 0.2)
+            bricks[i].ChangeSpeed(bricks[i].GetMoveSpeed() * changeFactor)
 
 
 
@@ -267,8 +273,8 @@ def CheckIfDead():
 def EndScreen():
     score = game.GetScore()
     sense.clear()
-    sense.show_message("Game Over",0.08,w)
-    sense.show_message("Score: " +  str(score), 0.08, w)
+    sense.show_message("Game Over",0.07,y)
+    sense.show_message("Score: " +  str(score), 0.07, y)
 
 
 #endregion
@@ -288,7 +294,7 @@ def GameLoop():
 
         # Spawn & Move
 
-        if spawnFreq == ConstSpawnFreq:
+        if spawnFreq >= ConstSpawnFreq:
             spawnFreq = 0
             GenerateBrick()
         else:
