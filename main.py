@@ -32,6 +32,8 @@ class Game():
 
 
 class Brick():
+    moveSpeed = 50
+
     position = []
     extraPosition = []
     site = ''
@@ -54,11 +56,17 @@ class Brick():
     def GetColor(self):
         return self.color
     
+    def ChangeSpeed(self, newValue):
+        self.moveSpeed = newValue
+    
+    def GetMoveSpeed(self):
+        return self.moveSpeed
+    
     def UpdatePosition(self, position = []):
         self.position = position
 
     def CheckMove(self):
-        if self.moveTimer == 30:
+        if self.moveTimer == self.moveSpeed:
             self.moveTimer = 0
             self.UpdatePosition()
         else:
@@ -91,6 +99,8 @@ class Brick():
         elif self.site == 'd':
             self.position[1] -= 1
             self.extraPosition[1] -= 1
+    
+
 
     
 
@@ -128,8 +138,9 @@ board = [
 sites = [ 'l', 'u', 'r', 'd'] # left, up, right, down
 colors = [ r, pu, pi, g, y]
 
-ConstSpawnFreq = 30
+ConstSpawnFreq = 50
 spawnFreq = 0
+nextIncrease = 2
 
 #endregion
 
@@ -167,7 +178,6 @@ def DisplayBricks():
     bricks = game.GetBricks()
     try:
         for i in range(len(bricks) + 1):
-            
                 position = bricks[i].GetPosition()
                 extraPosition = bricks[i].GetExtraPosition()
                 color = bricks[i].GetColor()
@@ -196,6 +206,20 @@ def CheckMiddleBrick():
         pass
 
 
+def CheckSpeedIncrease():
+    global spawnFreq
+    global nextIncrease
+    score = game.GetScore
+
+    if (score == nextIncrease):
+        nextIncrease *= 2
+        spawnFreq *= 0.2
+        bricks = game.GetBricks()
+
+        for i in range(len(bricks)):
+            bricks[i].ChangeSpeed(bricks[i].GetMoveSpeed() * 0.2)
+
+
 
 
 #endregion
@@ -220,12 +244,16 @@ def Hit(direction):
     
     bricks = game.GetBricks()
     try:
+        hit = False
         for i in range(len(bricks)):
             if bricks[i].GetPosition() == position1 or bricks[i].GetPosition() == position2:
                 game.AddPoints(1)
                 game.RemoveBrick(i)
+                hit = True
     except:
         pass
+    if not hit:
+        game.RemoveLife()
 
 #endregion
             
@@ -268,6 +296,8 @@ def GameLoop():
 
         CheckMoveBricks()
         CheckMiddleBrick()
+
+        CheckSpeedIncrease()
 
         # Lifes
 
