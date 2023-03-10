@@ -9,7 +9,6 @@ class Game():
     lives = 5
     score = 0
 
-
     def AddBrick(self, Brick):
         self.bricks.insert(len(self.bricks), Brick)
 
@@ -34,7 +33,6 @@ class Game():
 
 class Brick():
     moveSpeed = 50
-
     position = []
     extraPosition = []
     site = ''
@@ -100,14 +98,9 @@ class Brick():
             self.extraPosition[0] -= 1
         elif self.site == 'd':
             self.position[1] -= 1
-            self.extraPosition[1] -= 1
-    
-
-
-    
+            self.extraPosition[1] -= 1 
 
 #endregion
-
 
 #region colors
 
@@ -225,9 +218,6 @@ def CheckSpeedIncrease():
         for i in range(len(bricks)):
             bricks[i].ChangeSpeed(bricks[i].GetMoveSpeed() * changeFactor)
 
-
-
-
 #endregion
 
 #region User Input
@@ -267,7 +257,6 @@ def Hit(direction):
 
 def CheckIfDead():
     lifes = game.GetLives()
-
     return lifes == 0
 
 def EndScreen():
@@ -275,7 +264,6 @@ def EndScreen():
     sense.clear()
     sense.show_message("Game Over",0.07,y)
     sense.show_message("Score: " +  str(score), 0.07, y)
-
 
 #endregion
 
@@ -318,7 +306,6 @@ def GameLoop():
         sense.set_pixels(b)
 
         time.sleep(0.02)
-
 
 GameLoop()
 
